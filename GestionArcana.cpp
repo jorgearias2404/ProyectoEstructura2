@@ -14,6 +14,12 @@ private:
   int NumeroLineas;
   Mago *next;
 public:
+void addLinea(string linea){
+ int NodoA = linea[0];
+ int NodoB = linea[1];
+ float Peso = linea[2];
+}
+// setters
 void SetNombre(string Nombre){
   this->Nombre = Nombre;
 }
@@ -69,6 +75,8 @@ if (SpellList.fail())
     int NumeroLineas = stoi(linea);
     while (NumeroLineas>0)
     {
+      getline(SpellList,linea);
+      nuevo->addLinea(linea);
       NumeroLineas--;
     }
     
