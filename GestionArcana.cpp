@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -213,6 +214,10 @@ private:
   Mago *next;
 public:
 
+void CargarGrafo(int NodoA, int NodoB, char NombreA, char NombreB, float Peso){
+Grafo.AddNodoA(NodoA,NodoB,NombreA,NombreB,Peso);
+}
+
 
 string GetNombre(){
   return Nombre;
@@ -254,11 +259,99 @@ Mago(){
  
 };
 
+
+
+int leerEnteroHastaEspacio(const char* str) {
+  char numeroStr[1000]; // Asumimos un número máximo de 20 dígitos
+  int i = 0;
+
+  // Leer caracteres hasta encontrar un espacio o el fin del string
+  while (str[i] != ' ' && str[i] != '\0' && i < 19) {
+      numeroStr[i] = str[i];
+      i++;
+  }
+
+  numeroStr[i] = '\0'; // Terminar el string
+
+  // Convertir el string a entero usando atoi()
+  return atoi(numeroStr);
+}
+int leerEnteroEntreEspacios(const char* str) {
+  char numeroStr[1000]; // Asumimos un número máximo de 20 dígitos
+  int i = 0, j = 0;
+  bool inicioNumero = false;
+
+  // Buscar el primer espacio
+  while (str[i] != ' ' && str[i] != '\0') {
+      i++;
+  }
+
+  // Saltar espacios adicionales
+  while (str[i] == ' ') {
+      i++;
+  }
+
+  // Leer el número entre espacios
+  while (str[i] != ' ' && str[i] != '\0' && j < 19) {
+      numeroStr[j] = str[i];
+      i++;
+      j++;
+      inicioNumero = true;
+  }
+
+  if (!inicioNumero){
+      return 0; //devuelve 0 si no encuentra un numero entre los espacios.
+  }
+
+  numeroStr[j] = '\0'; // Terminar el string
+
+  // Convertir el string a entero usando atoi()
+  return atoi(numeroStr);
+}
+float leerFlotanteDesdeSegundoEspacio(const char* str) {
+  char numeroStr[1000]; // Asumimos un número máximo de 20 dígitos
+  int i = 0, j = 0;
+  int espaciosEncontrados = 0;
+  bool inicioNumero = false;
+
+  // Buscar el segundo espacio
+  while (str[i] != '\0') {
+      if (str[i] == ' ') {
+          espaciosEncontrados++;
+          if (espaciosEncontrados == 2) {
+              i++; // Empezar a leer después del segundo espacio
+              break;
+          }
+      }
+      i++;
+  }
+
+  // Leer el número hasta el final del string
+  while (str[i] != '\0' && j < 19) {
+      numeroStr[j] = str[i];
+      i++;
+      j++;
+      inicioNumero = true;
+  }
+
+  if (!inicioNumero){
+      return 0; //devuelve 0 si no encuentra un numero despues del segundo espacio.
+  }
+
+  numeroStr[j] = '\0'; // Terminar el string
+
+  // Convertir el string a flotante usando atof()
+  return atof(numeroStr);
+}
+
+
+
 class Hechiceros
 {
 private:
 fstream Archivo;
   Mago *first;
+  Mago *last;
 public:
 void CargarDatosSpellList(){
 Archivo.open("spellList.in");
@@ -281,15 +374,30 @@ Archivo.open("spellList.in");
 
       getline(Archivo,Linea);//CARACTERES
       nuevo->SetCaracteres(Linea);
+      string Caracteres = Linea;
       
       getline(Archivo,Linea);//LINEAS DE ENTRADA DELOS NODOS
       int CantidadLineas = stoi(Linea);
 
       while (CantidadLineas > 0)
       {
+        getline(Archivo,Linea);//LINEAS DE ENTRADA DELOS NODOS
+        int nodoA =leerEnteroHastaEspacio(Linea.c_str());
+        int nodoB = leerEnteroEntreEspacios(Linea.c_str());
+        float Peso = leerFlotanteDesdeSegundoEspacio(Linea.c_str());
+
+        nuevo->CargarGrafo(nodoA,nodoB,Caracteres[nodoA-1],Caracteres[nodoB-1],Peso);
         CantidadLineas--;
       }
       
+      if (first == nullptr)
+      {
+        first = nuevo;
+      }
+      else{
+        last->SetNext(nuevo);
+      }
+     last = nuevo;
       
       CantidadMagos--;
     }
@@ -299,27 +407,31 @@ Archivo.open("spellList.in");
     Archivo.close();
 }  
 
+void ImprimirMagos(){
+  Mago *actual = first;
+  while (actual != nullptr){
+    cout<<"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<<endl;
+    cout << "Nombre: " << actual->GetNombre() << endl;
+    cout << "Caracteres: " << actual->GetCaracteres() << endl;
+    cout <<"++++++++++++ Grafo: +++++++++++" << endl;
+    actual->ImprimirGrafo();
+    cout << "++++++++++++ Fin Grafo: +++++++++++" << endl;
+    cout<<endl;
+    actual = actual->GetNext();
+    cout<<"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<<endl;
+  }
+}
 Hechiceros(){
       first = nullptr;
   }
   
 };
 
-
-
 int main(){
-  ListaV2 test;
-  string Letras = "ABFBDB";
-  test.AddNodoA(6,1,Letras[6-1],Letras[1-1],2);
-  test.AddNodoA(6,4,Letras[6-1],Letras[4-1],1);
-  test.AddNodoA(1,2,Letras[1-1],Letras[2-1],1);
-  test.AddNodoA(1,4,Letras[1-1],Letras[4-1],4);
-  test.AddNodoA(2,4,Letras[2-1],Letras[4-1],7);
-  test.AddNodoA(2,5,Letras[2-1],Letras[5-1],2);
-  test.AddNodoA(5,3,Letras[5-1],Letras[3-1],1);
-  test.AddNodoA(4,3,Letras[4-1],Letras[3-1],3);
-  //el nodo 1 deberia estar relacionado con los nodos 2 7 9  3
+  
+Hechiceros MAGOS;
+MAGOS.CargarDatosSpellList();
+MAGOS.ImprimirMagos();
 
-  test.ImprimirListaV2();
     return 0;
 }
