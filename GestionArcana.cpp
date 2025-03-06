@@ -207,11 +207,102 @@ class Mago
 {
 private:
   string Nombre;
+  int NumeroCaracteres;
+  string Caracteres;
+  ListaV2 Grafo;
+  Mago *next;
 public:
-  Mago(/* args */){
 
+
+string GetNombre(){
+  return Nombre;
+}
+int GetNumeroCaracteres(){
+  return NumeroCaracteres;
+}
+string GetCaracteres(){
+  return Caracteres;
+}
+Mago *GetNext(){
+  return next;
+}
+
+void SetNombre(string Nombre){
+this->Nombre=Nombre;
+}
+void SetNumeroCaracteres(int NumeroCaracteres){
+  this->NumeroCaracteres=NumeroCaracteres;
+}
+void SetCaracteres(string Caracteres){
+  this->Caracteres=Caracteres;
+}
+void SetNext(Mago *next){
+  this->next=next;
+}
+  
+void ImprimirGrafo(){
+Grafo.ImprimirListaV2();
+}
+
+
+Mago(){
+    Nombre = "";
+    NumeroCaracteres = 0;
+    Caracteres = "";
+    next = nullptr;
   }
  
+};
+
+class Hechiceros
+{
+private:
+fstream Archivo;
+  Mago *first;
+public:
+void CargarDatosSpellList(){
+Archivo.open("spellList.in");
+    if (Archivo.fail()) {
+      cout << "Error al abrir el archivo" << endl;
+      return;
+    }
+    string Linea;
+    getline(Archivo, Linea);
+    int CantidadMagos = stoi(Linea);
+    while (CantidadMagos > 0)
+    {
+      Mago *nuevo = new Mago();
+     
+      getline(Archivo,Linea); //NOMBRE DEL MAGO
+      nuevo->SetNombre(Linea);
+
+      getline(Archivo,Linea);//CANTIDAD DE CARACTERES
+      nuevo->SetNumeroCaracteres(stoi(Linea));
+
+      getline(Archivo,Linea);//CARACTERES
+      nuevo->SetCaracteres(Linea);
+      
+      getline(Archivo,Linea);//LINEAS DE ENTRADA DELOS NODOS
+      int CantidadLineas = stoi(Linea);
+
+      while (CantidadLineas > 0)
+      {
+        CantidadLineas--;
+      }
+      
+      
+      CantidadMagos--;
+    }
+    
+
+ 
+    Archivo.close();
+}  
+
+Hechiceros(){
+      first = nullptr;
+  }
+  
 };
 
 
