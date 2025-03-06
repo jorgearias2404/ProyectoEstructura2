@@ -3,102 +3,232 @@
 
 using namespace std;
 
-ifstream SpellList;
+class Nodo
+{
+private:
+   int ID;
+   char NOMBRE;
+   float Peso;
+   Nodo *next; 
+public:
+ void SetId(int ID){
+  this->ID = ID;
+ }
+ void SetNombre(char NOMBRE){
+  this->NOMBRE = NOMBRE;
+ }
+ void SetPeso(float Peso){
+  this->Peso = Peso;
+ }
+ void SetNext(Nodo *next){
+  this->next = next;
+ }
+  Nodo* GetNext(){
+return next;
+  }
+ void Datos(){
+  cout << "ID: " << ID << endl;
+  cout << "Nombre: " << NOMBRE << endl;
+  cout << "Peso: " << Peso << endl;
+}
+  Nodo(){
+    ID = 0;
+    NOMBRE = ' ';
+    next = NULL;
+  }
+  
+};
+
+class lista
+{
+private:
+  Nodo *first;
+  Nodo *last;
+public:
+
+
+void Add(int nodoB,int Peso,char Nombre){
+  Nodo *nuevo = new Nodo();
+ nuevo->SetId(nodoB);
+ nuevo->SetNombre(Nombre);
+ nuevo->SetPeso(Peso);
+
+ if (first == nullptr)
+ {
+  first=nuevo;
+ }
+ else{
+  last->SetNext(nuevo);
+ }
+ last = nuevo;
+}
+ void ImprimirInfo(){
+  Nodo *aux = first;
+  while (aux!=nullptr)
+  {
+    cout<<"NODO ADYACENTE"<<endl;
+    aux->Datos();
+    aux = aux->GetNext();
+  }
+  
+ }
+lista(){
+  first = NULL;
+  last = NULL;
+ }
+};
+
+class NodoV2
+{
+private:
+  int NodoA;
+  char Nombre;
+  lista Adyacencia;
+  NodoV2* next;
+  NodoV2* prev;
+public:
+void SetNodoA(int id){
+  NodoA = id;
+}
+void SetNombre(char nombre){
+  Nombre = nombre;
+}
+void SetNext(NodoV2 *next){
+this->next = next;
+}
+void SetPrev(NodoV2 *prev){
+  this->prev = prev;
+}
+
+int GetNodoA(){
+  return NodoA;
+}
+char GetNombre(){
+  return Nombre;
+}
+
+
+void ImprimirAdyacencias(){
+  Adyacencia.ImprimirInfo();
+}
+NodoV2* GetNext(){
+  return next;
+}
+NodoV2* GetPrev(){
+  return prev;
+}
+void SetAdyacencia(int NodoB,char Nombre,float Peso){
+  Adyacencia.Add(NodoB,Peso,Nombre);
+}
+
+  NodoV2(){
+    NodoA = 0;
+    Adyacencia = lista();
+    next = nullptr;
+    prev = nullptr;
+  }
+  
+};
+
+class ListaV2
+{
+private:
+  NodoV2 *first;
+public:
+
+bool NodoAAGREGADO(int ID){
+  for (NodoV2 *aux = first; aux != nullptr; aux = aux->GetNext())
+  {
+    if (aux->GetNodoA() == ID)
+    {
+      return true;
+    }
+    
+  }
+  return false;
+}
+
+void AddNodoA(int NodoA,int NodoB,char NombreA,char NombreB,float Peso){
+  if (!NodoAAGREGADO(NodoA))
+  {
+    NodoV2 *nuevo = new NodoV2();
+    nuevo->SetNodoA(NodoA);
+    nuevo->SetNombre(NombreA);
+    nuevo->SetAdyacencia(NodoB,NombreB,Peso);
+  
+    NodoV2* aux1 = first;
+    NodoV2* aux2;
+    while ((aux1 !=nullptr) && (aux1->GetNodoA() < nuevo->GetNodoA()))
+    {
+      aux2 = aux1;
+      aux1 = aux1->GetNext();
+    }
+    if (aux1 == first){ //es el primero
+      first = nuevo;
+    }
+    else{
+      aux2->SetNext(nuevo);
+    }
+    nuevo->SetNext(aux1);
+    nuevo->SetPrev(aux2);
+  }
+  else{
+    // cout<<"YA AGREGADO"<<endl;
+
+    NodoV2 *aux = first;
+           while (aux->GetNodoA() != NodoA)
+           {
+               aux = aux->GetNext();
+           }
+           // Verificar si la adyacencia ya existe antes de agregar
+           // Aquí se puede agregar lógica para evitar duplicados
+           aux->SetAdyacencia(NodoB, NombreB, Peso);     
+
+  }
+  
+  
+}
+  
+void ImprimirListaV2(){
+  NodoV2 *aux = first;
+  while (aux != nullptr){
+    cout << "Nodo BASE: " << aux->GetNodoA() << endl;
+    cout << "Nombre: " << aux->GetNombre() << endl;
+    cout << "Adyacencia: " << endl;
+    aux->ImprimirAdyacencias();
+    cout << endl;
+    cout<<"=========================================="<<endl;
+    aux = aux->GetNext();
+
+  }
+}
+ListaV2(){
+    first = nullptr;
+  }
+};
+
 
 class Mago
 {
 private:
   string Nombre;
-  int CantidadCaracteres;
-  string Caracteres;
-  int NumeroLineas;
-  Mago *next;
 public:
-void addLinea(string linea){
- int NodoA = linea[0];
- int NodoB = linea[1];
- float Peso = linea[2];
-}
-// setters
-void SetNombre(string Nombre){
-  this->Nombre = Nombre;
-}
-void SetCantidadCaracteres(int  CantidadCaracteres){
-  this->CantidadCaracteres = CantidadCaracteres;
-}
-void SetCaracteres(string Caracteres){
-  this->Caracteres = Caracteres;
-}
-void SerNumeroLineas(int NumeroLineas){
-  this->NumeroLineas = NumeroLineas;
-}
-  Mago(){
-     Nombre ="";
-     CantidadCaracteres = 0;
-     Caracteres = "";
-     NumeroLineas = 0;
-     next = NULL;
+  Mago(/* args */){
 
   }
+ 
 };
 
 
-class Magos
-{
-private:
-
-    // Mago *first;.
-    // Mago *last;.
-public:
-void add(){
-  SpellList.open("spellList.in",ios::in);
-if (SpellList.fail())
-{
-    cout << "Error: Unable to open the file." << endl;
-    return;
-
-  }
-  string linea;
-  getline(SpellList,linea);
-  int CantidadMagos = stoi(linea);
-  while (CantidadMagos>0)
-  {
-    Mago *nuevo = new Mago();
-    getline(SpellList,linea);
-    nuevo->SetNombre(linea);
-    getline(SpellList,linea);
-    nuevo->SetCantidadCaracteres(stoi(linea));
-    getline(SpellList,linea);
-    nuevo->SetCaracteres(linea);
-    getline(SpellList,linea);
-    nuevo->SerNumeroLineas(stoi(linea));
-    int NumeroLineas = stoi(linea);
-    while (NumeroLineas>0)
-    {
-      getline(SpellList,linea);
-      nuevo->addLinea(linea);
-      NumeroLineas--;
-    }
-    
-
-    CantidadMagos--;
-  }
-  
-
-
-  
-}
-    Magos(){
-
-        //   first =nullptr;
-        // last = nullptr;
-    }
-            
-};
 
 int main(){
-Magos pepe;
-pepe.add();
+  ListaV2 test;
+  test.AddNodoA(1,2,'a','b',5);
+  test.AddNodoA(2,7,'c','d',7);
+  test.AddNodoA(2,9,'e','f',3);
+  test.AddNodoA(1,3,'e','f',3);
+  //el nodo 1 deberia estar relacionado con los nodos 2 7 9  3
 
+  test.ImprimirListaV2();
     return 0;
 }
