@@ -12,6 +12,12 @@ private:
    float Peso;
    Nodo *next; 
 public:
+float GetPeso(){
+  return Peso;
+}
+int GetId(){
+  return ID;
+}
 char GetNombre(){
   return NOMBRE;
 }
@@ -50,6 +56,17 @@ private:
   Nodo *last;
 public:
 
+int NodoConMayorPeso(){
+ Nodo* aux =first;
+ int NodoConPesoMax = aux->GetId(); 
+ while(aux!=NULL){
+    if(aux->GetPeso() < aux->GetNext()->GetPeso()){
+      NodoConPesoMax = aux->GetNext()->GetId();
+    }
+    aux = aux->GetNext();
+ }
+ return NodoConPesoMax;//aqui me retorna el nodo que tiene el peso maximo en mi lista
+}
 
 bool TodosSonSoportes(){
   Nodo *aux = first;
@@ -111,10 +128,14 @@ class NodoV2
 private:
   int NodoA;
   char Nombre;
+  bool Visitado;
   lista Adyacencia;
   NodoV2* next;
   NodoV2* prev;
 public:
+float AdyacenciaConMayorPeso(){
+  return Adyacencia.NodoConMayorPeso();
+}
 bool PoseeRunasElementales(){
   return Adyacencia.PoseeRunasElementales();
 }
@@ -160,6 +181,7 @@ void SetAdyacencia(int NodoB,char Nombre,float Peso){
     Adyacencia = lista();
     next = nullptr;
     prev = nullptr;
+    Visitado = false;
   }
   
 };
@@ -169,6 +191,27 @@ class ListaV2
 private:
   NodoV2 *first;
 public:
+
+
+void DesplazarseIzquierda(NodoV2 *actual,int Objetivo){
+  
+  while (actual->GetNodoA() != Objetivo ){
+  {
+    actual =actual->GetPrev();
+  }
+  
+ }
+}
+void DesplazarseDerecha(NodoV2 *actual,int Objetivo){
+  while (actual->GetNodoA() != Objetivo ){
+    {
+      actual =actual->GetNext();
+    }
+    
+   }
+}
+
+
 
 bool NodoAAGREGADO(int ID){
   for (NodoV2 *aux = first; aux != nullptr; aux = aux->GetNext())
@@ -310,6 +353,9 @@ bool HechizoValido(){
 ListaV2(){
     first = nullptr;
   }
+
+
+  
 };
 
 
