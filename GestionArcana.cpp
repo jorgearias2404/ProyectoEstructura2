@@ -10,6 +10,7 @@ private:
    int ID;
    char NOMBRE;
    float Peso;
+   bool Visitado;
    Nodo *next; 
 public:
 float GetPeso(){
@@ -45,6 +46,8 @@ return next;
     ID = 0;
     NOMBRE = ' ';
     next = NULL;
+    Peso = 0;
+    Visitado = false;
   }
   
 };
@@ -94,19 +97,29 @@ bool PoseeRunasElementales(){
 }
 void Add(int nodoB,int Peso,char Nombre){
   Nodo *nuevo = new Nodo();
- nuevo->SetId(nodoB);
- nuevo->SetNombre(Nombre);
- nuevo->SetPeso(Peso);
+  nuevo->SetId(nodoB);
+  nuevo->SetPeso(Peso);
+  nuevo->SetNombre(Nombre);
 
- if (first == nullptr)
- {
-  first=nuevo;
- }
- else{
-  last->SetNext(nuevo);
- }
- last = nuevo;
+  Nodo *Aux1 = first;
+  Nodo *Aux2;
+
+  while (Aux1!=nullptr && Aux1->GetId()< nuevo->GetId())
+  {
+      Aux2 =Aux1;
+      Aux1 = Aux1->GetNext();
+  }
+  if (Aux1 == first)
+  {
+      first = nuevo;
+  }
+  else{
+      Aux2->SetNext(nuevo);
+  }
+  
+  nuevo->SetNext(Aux1);
 }
+
  void ImprimirInfo(){
   Nodo *aux = first;
   while (aux!=nullptr)
@@ -133,9 +146,7 @@ private:
   NodoV2* next;
   NodoV2* prev;
 public:
-float AdyacenciaConMayorPeso(){
-  return Adyacencia.NodoConMayorPeso();
-}
+
 bool PoseeRunasElementales(){
   return Adyacencia.PoseeRunasElementales();
 }
