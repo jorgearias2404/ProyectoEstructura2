@@ -12,6 +12,9 @@ private:
    float Peso;
    Nodo *next; 
 public:
+char GetNombre(){
+  return NOMBRE;
+}
  void SetId(int ID){
   this->ID = ID;
  }
@@ -48,6 +51,29 @@ private:
 public:
 
 
+bool TodosSonSoportes(){
+  Nodo *aux = first;
+  while(aux != nullptr){
+    if (aux->GetNombre() != 'B')
+    {
+      return false;
+    }
+    
+  }
+  return true;
+}
+
+bool PoseeRunasElementales(){
+  Nodo *actual = first;
+  while(actual != NULL){
+    if (actual->GetNombre() == 'I' ||actual->GetNombre() == 'Q' ||actual->GetNombre() == 'T' ||actual->GetNombre() == 'V' ||actual->GetNombre() == 'L' ||actual->GetNombre() == 'O')
+    {
+      return true;
+    }
+    actual = actual->GetNext();
+  }
+  return false;
+}
 void Add(int nodoB,int Peso,char Nombre){
   Nodo *nuevo = new Nodo();
  nuevo->SetId(nodoB);
@@ -88,6 +114,12 @@ private:
   NodoV2* next;
   NodoV2* prev;
 public:
+bool PoseeRunasElementales(){
+  return Adyacencia.PoseeRunasElementales();
+}
+bool TodosSonSoportes(){
+  return Adyacencia.TodosSonSoportes();
+}
 void SetNodoA(int id){
   NodoA = id;
 }
@@ -184,7 +216,16 @@ void AddNodoA(int NodoA,int NodoB,char NombreA,char NombreB,float Peso){
   // Añadir NodoB -> NodoA
   AgregarRelacion(NodoB, NodoA, NombreB, NombreA, Peso);
 }
-  
+int CantidadRunasElementales(){
+  int runas = 0;
+  for (NodoV2 *actual = first; actual != nullptr; actual = actual->GetNext()){
+    if (actual->GetNombre() == 'I' ||actual->GetNombre() == 'Q' ||actual->GetNombre() == 'T' ||actual->GetNombre() == 'V' ||actual->GetNombre() == 'L' ||actual->GetNombre() == 'O'){
+   
+      runas++;
+     }
+  }
+  return runas;
+}
 void ImprimirListaV2(){
   NodoV2 *aux = first;
   while (aux != nullptr){
@@ -198,6 +239,73 @@ void ImprimirListaV2(){
 
   }
 }
+
+bool Articulo1Valido(){//SOLO UN NODO CON CARACTER A
+  NodoV2 *actual = first;
+  int Contador = 0;
+  while (actual != nullptr) {
+    if (actual->GetNombre() == 'A'){
+   
+     Contador++;
+    }
+    actual = actual->GetNext();
+  }
+
+  if (Contador == 1)
+  {
+    return true;
+  }
+  return false;
+}
+bool Articulo2Valido(){//DEL NODO DE CARACTER A SUS NODOS ADYACENTES TODOS DEBEN SER DE CARACTER B
+  NodoV2 *actual = first;
+  while (actual != nullptr) {
+    if (actual->GetNombre() == 'A'){
+        if (actual->TodosSonSoportes())
+        {
+          return true;
+        }
+        else{
+          return false;
+        }
+    }
+    actual = actual->GetNext();
+  }
+  return false;
+}
+bool Articulo3Valido(){//EL HECHIZO SOLO PUEDE TENER 3 RUNAS ELEMENTALES
+  NodoV2 *actual = first;
+  int Contador = 0;
+if (CantidadRunasElementales()<3)
+{
+  return true;
+}
+return false;
+
+}
+bool Articulo4Valido(){//VALIDA QUE UNA RANA CATALITICA NO ESTE ADYACENTE A UNA RUNA ELEMENTAL
+  NodoV2 *actual = first;
+  
+  while (actual != nullptr) {
+    if (actual->GetNombre() == 'D'){
+      if (actual->PoseeRunasElementales())
+      {
+        return false;
+      }
+    }
+    actual = actual->GetNext();
+  }
+
+ 
+  return true;
+}
+
+
+
+bool HechizoValido(){
+  return Articulo1Valido() && Articulo2Valido() && Articulo3Valido() && Articulo4Valido();
+}
+
 ListaV2(){
     first = nullptr;
   }
@@ -218,6 +326,9 @@ void CargarGrafo(int NodoA, int NodoB, char NombreA, char NombreB, float Peso){
 Grafo.AddNodoA(NodoA,NodoB,NombreA,NombreB,Peso);
 }
 
+bool HechizoValido(){
+  return Grafo.HechizoValido();
+}
 
 string GetNombre(){
   return Nombre;
@@ -407,6 +518,8 @@ Archivo.open("spellList.in");
     Archivo.close();
 }  
 
+
+
 void ImprimirMagos(){
   Mago *actual = first;
   while (actual != nullptr){
@@ -417,21 +530,42 @@ void ImprimirMagos(){
     actual->ImprimirGrafo();
     cout << "++++++++++++ Fin Grafo: +++++++++++" << endl;
     cout<<endl;
+    
     actual = actual->GetNext();
     cout<<"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<<endl;
+  }
+}
+void MagosValido(){
+  Mago *actual = first;
+  while (actual != nullptr){
+    if (actual->HechizoValido())
+    {
+      cout<<"Hechizo valido"<<endl;
+    }
+    else{
+      cout<<"Hechizo invalido"<<endl;
+    }
+    
+
+    actual = actual->GetNext();
   }
 }
 Hechiceros(){
       first = nullptr;
   }
+
   
 };
 
 int main(){
-  
+
 Hechiceros MAGOS;
 MAGOS.CargarDatosSpellList();
-MAGOS.ImprimirMagos();
+
+
+
+// MAGOS.ImprimirMagos();
+MAGOS.MagosValido();  
 
     return 0;
 }
