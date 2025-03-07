@@ -58,10 +58,11 @@ bool TodosSonSoportes(){
     {
       return false;
     }
-    
+    aux = aux->GetNext(); // Update the pointer to avoid infinite loop
   }
   return true;
 }
+
 
 bool PoseeRunasElementales(){
   Nodo *actual = first;
@@ -564,7 +565,7 @@ MAGOS.CargarDatosSpellList();
 
 
 
-// MAGOS.ImprimirMagos();
+MAGOS.ImprimirMagos();
 MAGOS.MagosValido();  
 
     return 0;
