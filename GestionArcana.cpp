@@ -58,6 +58,9 @@ private:
   Nodo *first;
   Nodo *last;
 public:
+Nodo* GetFirst() {
+  return first;
+}
 
 int NodoConMayorPeso(){
  Nodo* aux =first;
@@ -146,6 +149,9 @@ private:
   NodoV2* next;
   NodoV2* prev;
 public:
+lista& GetAdyacencia() {
+  return Adyacencia;
+}
 
 bool PoseeRunasElementales(){
   return Adyacencia.PoseeRunasElementales();
@@ -201,7 +207,69 @@ class ListaV2//GRAFO
 {
 private:
   NodoV2 *first;
-public:
+
+ // Función auxiliar para encontrar el ciclo más largo usando backtracking
+   void encontrarCicloMasLargo(NodoV2* nodoActual, NodoV2* nodoAnterior, int longitudActual, int& longitudMaxima, bool visitados[]) {
+    visitados[nodoActual->GetNodoA() - 1] = true; // Marcar el nodo como visitado
+
+    // Recorrer todos los nodos adyacentes
+    Nodo* adyacente = nodoActual->GetAdyacencia().GetFirst();
+    while (adyacente != nullptr) {
+      int nodoAdyacenteID = adyacente->GetId();
+      NodoV2* nodoAdyacenteV2 = GetNodoPorID(nodoAdyacenteID); // Obtener el NodoV2 correspondiente
+
+      if (nodoAdyacenteV2 != nullptr) {
+        if (!visitados[nodoAdyacenteID - 1]) {
+          // Si el nodo adyacente no ha sido visitado, continuar la búsqueda
+          encontrarCicloMasLargo(nodoAdyacenteV2, nodoActual, longitudActual + 1, longitudMaxima, visitados);
+        } else if (nodoAdyacenteID != nodoAnterior->GetNodoA()) {
+          // Si encontramos un ciclo, actualizar la longitud máxima
+          if (longitudActual + 1 > longitudMaxima) {
+            longitudMaxima = longitudActual + 1;
+          }
+        }
+      }
+
+      adyacente = adyacente->GetNext();
+    }
+
+    visitados[nodoActual->GetNodoA() - 1] = false; // Desmarcar el nodo para permitir otros caminos
+  }
+  
+  
+  public:
+    // Función para obtener un NodoV2 por su ID
+  NodoV2 *GetNodoPorID(int id) {
+      NodoV2* actual = first;
+      while (actual != nullptr) {
+        if (actual->GetNodoA() == id) {
+          return actual;
+        }
+        actual = actual->GetNext();
+      }
+      return nullptr; // Si no se encuentra el nodo
+    }
+  // Función para verificar si el ciclo más largo es par
+  bool Articulo5Valido() {
+    int longitudMaxima = 0;
+    bool visitados[100] = {false}; // Asumimos un máximo de 100 nodos
+
+    // Iniciar la búsqueda desde cada nodo
+    NodoV2* actual = first;
+    while (actual != nullptr) {
+      encontrarCicloMasLargo(actual, nullptr, 0, longitudMaxima, visitados);
+      actual = actual->GetNext();
+    }
+     // Verificar si la longitud del ciclo más largo es par
+     cout<<"LongitudMaxima: "<<longitudMaxima<<endl;
+     return (longitudMaxima % 2 == 0);
+    }
+  // Función para verificar si el hechizo es válido según todos los artículos
+  bool HechizoValido() {
+    return Articulo1Valido() && Articulo2Valido() && Articulo3Valido() && Articulo4Valido() && Articulo5Valido();
+  }
+
+
 
 
 void DesplazarseIzquierda(NodoV2 *actual,int Objetivo){
@@ -373,9 +441,6 @@ bool Articulo4Valido(){//VALIDA QUE UNA RANA CATALITICA NO ESTE ADYACENTE A UNA 
 
 
 
-bool HechizoValido(){
-  return Articulo1Valido() && Articulo2Valido() && Articulo3Valido() && Articulo4Valido();
-}
 
 ListaV2(){
     first = nullptr;
@@ -632,6 +697,8 @@ Hechiceros(){
 };
 
 int main(){
+
+
 
 Hechiceros MAGOS;
 MAGOS.CargarDatosSpellList();
