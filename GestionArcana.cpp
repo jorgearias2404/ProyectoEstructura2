@@ -34,7 +34,7 @@ char GetNombre(){
  void SetNext(Nodo *next){
   this->next = next;
  }
-  Nodo* GetNext(){
+ Nodo* GetNext(){
 return next;
   }
  void Datos(){
@@ -104,7 +104,7 @@ void Add(int nodoB,int Peso,char Nombre){
   Nodo *Aux1 = first;
   Nodo *Aux2;
 
-  while (Aux1!=nullptr && Aux1->GetId()< nuevo->GetId())
+  while (Aux1!=nullptr && Aux1->GetPeso()< nuevo->GetPeso())
   {
       Aux2 =Aux1;
       Aux1 = Aux1->GetNext();
