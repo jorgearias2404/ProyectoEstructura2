@@ -13,6 +13,13 @@ private:
    bool Visitado;
    Nodo *next; 
 public:
+
+void SetVisitado(){
+  Visitado = true;
+}
+void SetNoVisitado(){
+  Visitado = false;
+}
 float GetPeso(){
   return Peso;
 }
@@ -52,7 +59,7 @@ return next;
   
 };
 
-class lista
+class lista//LISTA DE ADYACENCIA
 {
 private:
   Nodo *first;
@@ -83,7 +90,9 @@ bool TodosSonSoportes(){
   return true;
 }
 
-
+void SetVisitado(Nodo* actual){
+actu
+}
 bool PoseeRunasElementales(){
   Nodo *actual = first;
   while(actual != NULL){
@@ -197,7 +206,7 @@ void SetAdyacencia(int NodoB,char Nombre,float Peso){
   
 };
 
-class ListaV2
+class ListaV2//GRAFO
 {
 private:
   NodoV2 *first;
@@ -295,7 +304,19 @@ void ImprimirListaV2(){
   }
 }
 
-bool Articulo1Valido(){//SOLO UN NODO CON CARACTER A
+bool PoseeConfluencia(){
+  NodoV2* actual = first;
+  while (actual != nullptr) {
+    if (actual->GetNombre() == 'A'){
+     return true;
+    }
+    actual = actual->GetNext();
+  }
+
+  return false;
+}
+
+bool Articulo1Valido(){//SOLO UN NODO CON CARACTER A ?
   NodoV2 *actual = first;
   int Contador = 0;
   while (actual != nullptr) {
@@ -306,13 +327,17 @@ bool Articulo1Valido(){//SOLO UN NODO CON CARACTER A
     actual = actual->GetNext();
   }
 
-  if (Contador == 1)
+  if (Contador >1)
+  {
+    return false;
+  }
+  return true;
+}
+bool Articulo2Valido(){//DEL NODO DE CARACTER A SUS NODOS ADYACENTES TODOS DEBEN SER DE CARACTER B
+  if (!PoseeConfluencia())
   {
     return true;
   }
-  return false;
-}
-bool Articulo2Valido(){//DEL NODO DE CARACTER A SUS NODOS ADYACENTES TODOS DEBEN SER DE CARACTER B
   NodoV2 *actual = first;
   while (actual != nullptr) {
     if (actual->GetNombre() == 'A'){
@@ -331,7 +356,7 @@ bool Articulo2Valido(){//DEL NODO DE CARACTER A SUS NODOS ADYACENTES TODOS DEBEN
 bool Articulo3Valido(){//EL HECHIZO SOLO PUEDE TENER 3 RUNAS ELEMENTALES
   NodoV2 *actual = first;
   int Contador = 0;
-if (CantidadRunasElementales()<3)
+if (CantidadRunasElementales() < 3)
 {
   return true;
 }
