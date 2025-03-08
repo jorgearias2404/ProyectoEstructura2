@@ -13,13 +13,6 @@ private:
    bool Visitado;
    Nodo *next; 
 public:
-
-void SetVisitado(){
-  Visitado = true;
-}
-void SetNoVisitado(){
-  Visitado = false;
-}
 float GetPeso(){
   return Peso;
 }
@@ -90,9 +83,7 @@ bool TodosSonSoportes(){
   return true;
 }
 
-void SetVisitado(Nodo* actual){
-actu
-}
+
 bool PoseeRunasElementales(){
   Nodo *actual = first;
   while(actual != NULL){
