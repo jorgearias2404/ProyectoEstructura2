@@ -245,7 +245,6 @@ bool tieneCaracter(NodoV2* nodo, const char caracteresFinales[], int numCaracter
   }
   return false;
 }
-// Función recursiva para encontrar el camino con la mayor ponderación
 // Función recursiva para encontrar la ponderación máxima del camino
 void encontrarCaminoMasPonderadoDesdeA(NodoV2* nodoActual, float ponderacionActual, float& ponderacionMaxima, int caminoActual[], int& longitudCaminoActual, bool visitados[], const char caracteresFinales[], int numCaracteres) {
   visitados[nodoActual->GetNodoA() - 1] = true; // Marcar el nodo como visitado
