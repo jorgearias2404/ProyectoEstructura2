@@ -509,8 +509,6 @@ Mago(){
  
 };
 
-
-
 int leerEnteroHastaEspacio(const char* str) {
   char numeroStr[1000]; // Asumimos un número máximo de 20 dígitos
   int i = 0;
@@ -593,7 +591,6 @@ float leerFlotanteDesdeSegundoEspacio(const char* str) {
   // Convertir el string a flotante usando atof()
   return atof(numeroStr);
 }
-
 
 
 class Hechiceros
@@ -698,12 +695,8 @@ Hechiceros(){
 
 int main(){
 
-
-
 Hechiceros MAGOS;
 MAGOS.CargarDatosSpellList();
-
-
 
 MAGOS.ImprimirMagos();
 MAGOS.MagosValido();  
