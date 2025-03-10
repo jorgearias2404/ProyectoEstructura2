@@ -203,9 +203,12 @@ void SetAdyacencia(int NodoB,char Nombre,float Peso){
   
 };
 
+
+
 class ListaV2//GRAFO
 {
 private:
+string TipoHechizo;
   NodoV2 *first;
 
  // Función auxiliar para encontrar el ciclo más largo usando backtracking
@@ -319,45 +322,6 @@ NodoV2 *GetNodoPorID(int id) {
       return nullptr; // Si no se encuentra el nodo
     }
   // Función para verificar si el ciclo más largo es par
-bool Articulo5Valido() {
-    int longitudMaxima = 0;
-    bool visitados[100] = {false}; // Asumimos un máximo de 100 nodos
-
-    // Iniciar la búsqueda desde cada nodo
-    NodoV2* actual = first;
-    while (actual != nullptr) {
-      encontrarCicloMasLargo(actual, nullptr, 0, longitudMaxima, visitados);
-      actual = actual->GetNext();
-    }
-     // Verificar si la longitud del ciclo más largo es par
-     return (longitudMaxima % 2 == 0);
-    }
-  // Función para verificar si el hechizo es válido según todos los artículos
-bool HechizoValido() {
-    return Articulo1Valido() && Articulo2Valido() && Articulo3Valido() && Articulo4Valido() && Articulo5Valido();
-  }
-
-
-
-
-void DesplazarseIzquierda(NodoV2 *actual,int Objetivo){
-  
-  while (actual->GetNodoA() != Objetivo ){
-  {
-    actual =actual->GetPrev();
-  }
-  
- }
-}
-void DesplazarseDerecha(NodoV2 *actual,int Objetivo){
-  while (actual->GetNodoA() != Objetivo ){
-    {
-      actual =actual->GetNext();
-    }
-    
-   }
-}
-
 
 
 bool NodoAAGREGADO(int ID){
@@ -506,12 +470,82 @@ bool Articulo4Valido(){//VALIDA QUE UNA RANA CATALITICA NO ESTE ADYACENTE A UNA 
  
   return true;
 }
+bool Articulo5Valido() {
+  int longitudMaxima = 0;
+  bool visitados[100] = {false}; // Asumimos un máximo de 100 nodos
 
+  // Iniciar la búsqueda desde cada nodo
+  NodoV2* actual = first;
+  while (actual != nullptr) {
+    encontrarCicloMasLargo(actual, nullptr, 0, longitudMaxima, visitados);
+    actual = actual->GetNext();
+  }
+   // Verificar si la longitud del ciclo más largo es par
+   return (longitudMaxima % 2 == 0);
+  }
+// Función para verificar si el hechizo es válido según todos los artículos
+bool HechizoValido() {
+  return Articulo1Valido() && Articulo2Valido() && Articulo3Valido() && Articulo4Valido() && Articulo5Valido();
+}
 
+bool PoseeRunas_C_E_S(){
+  NodoV2 *actual = first;
+  for (NodoV2 *actual = first; actual != nullptr; actual = actual->GetNext()){
+    if (actual->GetNombre() == 'I' ||actual->GetNombre() == 'Q' ||actual->GetNombre() == 'T' ||actual->GetNombre() == 'V' ||actual->GetNombre() == 'L' ||actual->GetNombre() == 'O'||actual->GetNombre() == 'F'||actual->GetNombre() == 'D'){
+   
+      return true;
+     }
+  }
+  return false;
+}
 
+int CantidadAristas(){
+  int longitudMaxima = 0;
+  bool visitados[100] = {false}; // Asumimos un máximo de 100 nodos
+
+   // Iniciar la búsqueda desde cada nodo
+   NodoV2* actual = first;
+   while (actual != nullptr) {
+     encontrarCicloMasLargo(actual, nullptr, 0, longitudMaxima, visitados);
+     actual = actual->GetNext();
+   }
+    // Verificar si la longitud del ciclo más largo es par
+    return longitudMaxima;
+}
+
+string PoseeRunasElementales(){
+  NodoV2 *actual = first;
+  string Salida = ""; 
+  for (NodoV2 *actual = first; actual != nullptr; actual = actual->GetNext()){
+    if (actual->GetNombre() == 'I' ||actual->GetNombre() == 'Q' ||actual->GetNombre() == 'T' ||actual->GetNombre() == 'V' ||actual->GetNombre() == 'L' ||actual->GetNombre() == 'O'){
+     char prefijo = actual->GetNombre();
+    
+     switch (prefijo){
+        case 'I': Salida = "Ignatum";break;
+        case 'Q':Salida = "Aquos";break;
+        case 'T': Salida = "Terraminium"; break;
+        case 'V': Salida = "Ventus"; break;
+        case 'L': Salida = "Lux"; break;
+        case 'O': Salida = "Tenebrae"; break;
+      }
+      
+    }
+    
+  }
+  
+  return Salida;
+}
+void SetTipoHechizo(string Hechizo){
+  this->TipoHechizo = Hechizo;
+}
+
+string GetTipoHechizo(){
+  return this->TipoHechizo;
+}
 
 ListaV2(){
     first = nullptr;
+    TipoHechizo =" ";
   }
 
 
@@ -527,6 +561,57 @@ private:
   ListaV2 Grafo;
   Mago *next;
 public:
+
+
+void NombreHechizo(string Apellido){
+  string Prefijo_Sufijo = Grafo.PoseeRunasElementales();
+  char UltimaLetra = Apellido[Apellido.length()-1];
+  string NombreH = Apellido;
+  string SegundoNombre;
+
+  if (Grafo.PoseeRunas_C_E_S())
+  {
+    if (Grafo.CantidadAristas() >= Grafo.encontrarCaminoMasPonderado(Grafo))
+    {
+      SegundoNombre = "maximus";
+    }
+    else{
+      SegundoNombre = "modicum";
+    }  
+  }
+  else{
+    SegundoNombre = "Arcante";
+  }
+
+  string Elemental = Grafo.PoseeRunasElementales();
+
+   
+  if(UltimaLetra == 'a'||UltimaLetra == 'e'||UltimaLetra == 'i'||UltimaLetra == 'o'||UltimaLetra == 'u'){
+    Apellido = Apellido.substr(0, Apellido.length() - 1);
+    NombreH = Apellido + "ium";
+  }else{
+    NombreH = Apellido + "um";
+  }
+
+  if (Elemental =="")
+  {
+    Grafo.SetTipoHechizo(NombreH + " "+ SegundoNombre);
+  }
+  else{
+    Grafo.SetTipoHechizo(Elemental+" "+ NombreH + " "+ SegundoNombre);
+  }
+  
+ 
+
+  
+
+
+}
+
+string GetNombreHechizo(){
+  return Grafo.GetTipoHechizo();
+}
+
 
 float  EncontrarCaminoMasPonderado(){
   float ponderacionMaxima = Grafo.encontrarCaminoMasPonderado(Grafo);
@@ -663,8 +748,23 @@ float leerFlotanteDesdeSegundoEspacio(const char* str) {
   // Convertir el string a flotante usando atof()
   return atof(numeroStr);
 }
+void separarNombreApellido(const std::string& texto, std::string& nombre, std::string& apellido) {
+  int espacioPos = -1;
+  for (int i = 0; i < texto.length(); ++i) {
+      if (texto[i] == ' ') {
+          espacioPos = i;
+          break;
+      }
+  }
 
-
+  if (espacioPos != -1) {
+      nombre = texto.substr(0, espacioPos);
+      apellido = texto.substr(espacioPos + 1);
+  } else {
+      nombre = texto;
+      apellido = ""; // Si no hay espacio, el apellido está vacío
+  }
+}
 class Hechiceros
 {
 private:
@@ -684,9 +784,12 @@ Archivo.open("spellList.in");
     while (CantidadMagos > 0)
     {
       Mago *nuevo = new Mago();
-     
+     string Nombre;
+     string Apellido;
       getline(Archivo,Linea); //NOMBRE DEL MAGO
       nuevo->SetNombre(Linea);
+
+      separarNombreApellido(Linea,Nombre,Apellido);//separa los nombre y apellido
 
       getline(Archivo,Linea);//CANTIDAD DE CARACTERES
       nuevo->SetNumeroCaracteres(stoi(Linea));
@@ -698,16 +801,18 @@ Archivo.open("spellList.in");
       getline(Archivo,Linea);//LINEAS DE ENTRADA DELOS NODOS
       int CantidadLineas = stoi(Linea);
 
-      while (CantidadLineas > 0)
-      {
-        getline(Archivo,Linea);//LINEAS DE ENTRADA DELOS NODOS
-        int nodoA =leerEnteroHastaEspacio(Linea.c_str());
-        int nodoB = leerEnteroEntreEspacios(Linea.c_str());
-        float Peso = leerFlotanteDesdeSegundoEspacio(Linea.c_str());
+        while (CantidadLineas > 0)
+        {
+          getline(Archivo,Linea);//LINEAS DE ENTRADA DELOS NODOS
+          int nodoA =leerEnteroHastaEspacio(Linea.c_str());
+          int nodoB = leerEnteroEntreEspacios(Linea.c_str());
+          float Peso = leerFlotanteDesdeSegundoEspacio(Linea.c_str());
 
-        nuevo->CargarGrafo(nodoA,nodoB,Caracteres[nodoA-1],Caracteres[nodoB-1],Peso);
-        CantidadLineas--;
-      }
+          nuevo->CargarGrafo(nodoA,nodoB,Caracteres[nodoA-1],Caracteres[nodoB-1],Peso);
+          CantidadLineas--;
+        }
+
+      nuevo->NombreHechizo(Apellido);
       
       if (first == nullptr)
       {
@@ -767,7 +872,14 @@ void ImprimirCaminoMayorPeso(){
   }
   
 }
-
+void ImprimirNOmbreHechizos(){
+  Mago *actual = first;
+  while (actual != nullptr){
+    cout<<"Hechizos del mago: "<<actual->GetNombre()<<endl;
+    cout<<actual->GetNombreHechizo()<<endl;
+    actual = actual->GetNext();
+  }
+}
 Hechiceros(){
       first = nullptr;
   }
@@ -782,6 +894,6 @@ MAGOS.CargarDatosSpellList();
 MAGOS.ImprimirMagos();
 MAGOS.MagosValido();  
 MAGOS.ImprimirCaminoMayorPeso();
-
+MAGOS.ImprimirNOmbreHechizos();
     return 0;
 }
