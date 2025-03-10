@@ -209,7 +209,7 @@ private:
   NodoV2 *first;
 
  // Función auxiliar para encontrar el ciclo más largo usando backtracking
-   void encontrarCicloMasLargo(NodoV2* nodoActual, NodoV2* nodoAnterior, int longitudActual, int& longitudMaxima, bool visitados[]) {
+void encontrarCicloMasLargo(NodoV2* nodoActual, NodoV2* nodoAnterior, int longitudActual, int& longitudMaxima, bool visitados[]) {
     visitados[nodoActual->GetNodoA() - 1] = true; // Marcar el nodo como visitado
 
     // Recorrer todos los nodos adyacentes
@@ -235,11 +235,81 @@ private:
 
     visitados[nodoActual->GetNodoA() - 1] = false; // Desmarcar el nodo para permitir otros caminos
   }
-  
-  
+   // Función auxiliar para verificar si un nodo tiene un carácter específico
+bool tieneCaracter(NodoV2* nodo, const char caracteresFinales[], int numCaracteres) {
+  char nombre = nodo->GetNombre();
+  for (int i = 0; i < numCaracteres; i++) {
+      if (nombre == caracteresFinales[i]) {
+          return true;
+      }
+  }
+  return false;
+}
+// Función recursiva para encontrar el camino con la mayor ponderación
+// Función recursiva para encontrar la ponderación máxima del camino
+void encontrarCaminoMasPonderadoDesdeA(NodoV2* nodoActual, float ponderacionActual, float& ponderacionMaxima, int caminoActual[], int& longitudCaminoActual, bool visitados[], const char caracteresFinales[], int numCaracteres) {
+  visitados[nodoActual->GetNodoA() - 1] = true; // Marcar el nodo como visitado
+  caminoActual[longitudCaminoActual++] = nodoActual->GetNodoA(); // Agregar el nodo al camino actual
+
+  // Verificar si el nodo actual es uno de los caracteres finales
+  if (tieneCaracter(nodoActual, caracteresFinales, numCaracteres)) {
+      // Si es un nodo final, comparar la ponderación actual con la máxima
+      if (ponderacionActual > ponderacionMaxima) {
+          ponderacionMaxima = ponderacionActual; // Actualizar la ponderación máxima
+      }
+  }
+
+  // Recorrer todos los nodos adyacentes
+  Nodo* adyacente = nodoActual->GetAdyacencia().GetFirst();
+  while (adyacente != nullptr) {
+      int nodoAdyacenteID = adyacente->GetId();
+      NodoV2* nodoAdyacenteV2 = GetNodoPorID(nodoAdyacenteID); // Obtener el NodoV2 correspondiente
+
+      if (nodoAdyacenteV2 != nullptr && !visitados[nodoAdyacenteID - 1]) {
+          // Si el nodo adyacente no ha sido visitado, continuar la búsqueda
+          encontrarCaminoMasPonderadoDesdeA(nodoAdyacenteV2, ponderacionActual + adyacente->GetPeso(), ponderacionMaxima, caminoActual, longitudCaminoActual, visitados, caracteresFinales, numCaracteres);
+      }
+
+      adyacente = adyacente->GetNext();
+  }
+
+  // Backtracking: desmarcar el nodo y removerlo del camino actual
+  visitados[nodoActual->GetNodoA() - 1] = false;
+  longitudCaminoActual--;
+}
+   
   public:
-    // Función para obtener un NodoV2 por su ID
-  NodoV2 *GetNodoPorID(int id) {
+
+  float encontrarCaminoMasPonderado(ListaV2& grafo) {
+    float ponderacionMaxima = 0;
+    int caminoActual[100]; // Asumimos un máximo de 100 nodos en el camino
+    int longitudCaminoActual = 0;
+    bool visitados[100] = {false}; // Asumimos un máximo de 100 nodos
+
+    // Caracteres finales válidos
+    const char caracteresFinales[] = {'I', 'Q', 'T', 'V', 'L', 'O', 'D', 'F'};
+    int numCaracteres = 8;
+
+    // Encontrar el nodo con el carácter 'A'
+    NodoV2* nodoA = nullptr;
+    NodoV2* actual = grafo.GetNodoPorID(1); // Asumimos que el grafo tiene al menos un nodo
+    while (actual != nullptr) {
+        if (actual->GetNombre() == 'A') {
+            nodoA = actual;
+            break;
+        }
+        actual = actual->GetNext();
+    }
+
+    // Si se encontró el nodo 'A', iniciar la búsqueda
+    if (nodoA != nullptr) {
+        encontrarCaminoMasPonderadoDesdeA(nodoA, 0, ponderacionMaxima, caminoActual, longitudCaminoActual, visitados, caracteresFinales, numCaracteres);
+    }
+
+    return ponderacionMaxima; // Devolver la ponderación máxima
+}
+ // Función para obtener un NodoV2 por su ID
+NodoV2 *GetNodoPorID(int id) {
       NodoV2* actual = first;
       while (actual != nullptr) {
         if (actual->GetNodoA() == id) {
@@ -250,7 +320,7 @@ private:
       return nullptr; // Si no se encuentra el nodo
     }
   // Función para verificar si el ciclo más largo es par
-  bool Articulo5Valido() {
+bool Articulo5Valido() {
     int longitudMaxima = 0;
     bool visitados[100] = {false}; // Asumimos un máximo de 100 nodos
 
@@ -261,11 +331,10 @@ private:
       actual = actual->GetNext();
     }
      // Verificar si la longitud del ciclo más largo es par
-     cout<<"LongitudMaxima: "<<longitudMaxima<<endl;
      return (longitudMaxima % 2 == 0);
     }
   // Función para verificar si el hechizo es válido según todos los artículos
-  bool HechizoValido() {
+bool HechizoValido() {
     return Articulo1Valido() && Articulo2Valido() && Articulo3Valido() && Articulo4Valido() && Articulo5Valido();
   }
 
@@ -450,7 +519,6 @@ ListaV2(){
   
 };
 
-
 class Mago
 {
 private:
@@ -460,6 +528,11 @@ private:
   ListaV2 Grafo;
   Mago *next;
 public:
+
+float  EncontrarCaminoMasPonderado(){
+  float ponderacionMaxima = Grafo.encontrarCaminoMasPonderado(Grafo);
+  return ponderacionMaxima;
+}
 
 void CargarGrafo(int NodoA, int NodoB, char NombreA, char NombreB, float Peso){
 Grafo.AddNodoA(NodoA,NodoB,NombreA,NombreB,Peso);
@@ -686,6 +759,16 @@ void MagosValido(){
     actual = actual->GetNext();
   }
 }
+void ImprimirCaminoMayorPeso(){
+  Mago *actual = first;
+  while (actual!=nullptr)
+  {
+    cout<<"Este es el camino mas ponderado: "<< actual->EncontrarCaminoMasPonderado()<<endl;
+    actual = actual->GetNext();
+  }
+  
+}
+
 Hechiceros(){
       first = nullptr;
   }
@@ -694,12 +777,12 @@ Hechiceros(){
 };
 
 int main(){
-
 Hechiceros MAGOS;
 MAGOS.CargarDatosSpellList();
 
 MAGOS.ImprimirMagos();
 MAGOS.MagosValido();  
+MAGOS.ImprimirCaminoMayorPeso();
 
     return 0;
 }
