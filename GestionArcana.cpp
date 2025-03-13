@@ -807,7 +807,7 @@ public:
 
 
 void CargarDatosSpellList(){
-Archivo.open("spellList.in");
+Archivo.open("spellList2.in");
     if (Archivo.fail()) {
       cout << "Error al abrir el archivo" << endl;
       return;
@@ -934,31 +934,75 @@ void CargarProcessedSpellOutV2() {
 }
 
 void ActualizarUnderInvestigation(){
-  Archivo.open("processedSpells.out", std::ios::app); // Abre en modo append
-  if (Archivo.fail()) {
-    cout << "Error al abrir el archivo" << endl;
-    return;
-  }
-  
-  for (Mago*aux = first; aux!=nullptr; aux = aux->GetNext())
-  { int CantidadHechizosIlegales = 0;
-    for (Mago* aux2  = first;aux2!=nullptr ; aux2 = aux2->GetNext())
-    {
-      if (aux2!=aux)//direcciones difernetes
-      {
-         if (aux->GetNombre() == aux2->GetNombre())
-         {
-          /* code */
-         }
-         
-      }
-      
+  Archivo.open("underInvestigation.in", std::ios::app); // Abre en modo append
+    if (Archivo.fail()) {
+        cout << "Error al abrir el archivo underInvestigation.in" << endl;
+        return;
     }
-    
-  }
+
+    // Crear una lista de nombres de magos y un contador de hechizos ilegales
+    struct MagoContador {
+        string nombre;
+        int contadorIlegales;
+    };
+
+    // Lista para almacenar los magos y su contador de hechizos ilegales
+    MagoContador* listaMagos = nullptr;
+    int cantidadMagos = 0;
+
+    // Recorrer la lista de magos y contar los hechizos ilegales
+    Mago* actual = first;
+    while (actual != nullptr) {
+        // Buscar si el mago ya está en la lista
+        bool encontrado = false;
+        for (int i = 0; i < cantidadMagos; i++) {
+            if (listaMagos[i].nombre == actual->GetNombre()) {
+                // Si el mago ya está en la lista, incrementar su contador
+                if (!actual->GetValidezGrafo()) {
+                    listaMagos[i].contadorIlegales++;
+                }
+                encontrado = true;
+                break;
+            }
+        }
+
+        // Si el mago no está en la lista, agregarlo
+        if (!encontrado) {
+            // Crear una nueva lista con un espacio adicional
+            MagoContador* nuevaLista = new MagoContador[cantidadMagos + 1];
+            for (int i = 0; i < cantidadMagos; i++) {
+                nuevaLista[i] = listaMagos[i];
+            }
+
+            // Agregar el nuevo mago a la lista
+            nuevaLista[cantidadMagos].nombre = actual->GetNombre();
+            nuevaLista[cantidadMagos].contadorIlegales = (!actual->GetValidezGrafo()) ? 1 : 0;
+
+            // Liberar la memoria de la lista anterior y actualizar la lista
+            delete[] listaMagos;
+            listaMagos = nuevaLista;
+            cantidadMagos++;
+        }
+
+        actual = actual->GetNext();
+    }
+
+    // Recorrer la lista de magos y añadir los que tienen 3 o más hechizos ilegales al archivo
+    for (int i = 0; i < cantidadMagos; i++) {
+        if (listaMagos[i].contadorIlegales >= 3) {
+            Archivo << listaMagos[i].nombre << endl; // Escribe el nombre del mago en el archivo
+        }
+    }
+
+    // Liberar la memoria de la lista de magos
+    delete[] listaMagos;
+
+    Archivo.close();
   
 
 }
+
+
 void ImprimirMagos(){
   Mago *actual = first;
   while (actual != nullptr){
