@@ -933,6 +933,32 @@ void CargarProcessedSpellOutV2() {
   Archivo.close();
 }
 
+void ActualizarUnderInvestigation(){
+  Archivo.open("processedSpells.out", std::ios::app); // Abre en modo append
+  if (Archivo.fail()) {
+    cout << "Error al abrir el archivo" << endl;
+    return;
+  }
+  
+  for (Mago*aux = first; aux!=nullptr; aux = aux->GetNext())
+  { int CantidadHechizosIlegales = 0;
+    for (Mago* aux2  = first;aux2!=nullptr ; aux2 = aux2->GetNext())
+    {
+      if (aux2!=aux)//direcciones difernetes
+      {
+         if (aux->GetNombre() == aux2->GetNombre())
+         {
+          /* code */
+         }
+         
+      }
+      
+    }
+    
+  }
+  
+
+}
 void ImprimirMagos(){
   Mago *actual = first;
   while (actual != nullptr){
@@ -948,6 +974,7 @@ void ImprimirMagos(){
     cout<<"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"<<endl;
   }
 }
+
 void MagosValido(){
   Mago *actual = first;
   while (actual != nullptr){
