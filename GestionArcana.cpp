@@ -86,7 +86,6 @@ bool TodosSonSoportes(){
   return true;
 }
 
-
 bool PoseeRunasElementales(){
   Nodo *actual = first;
   while(actual != NULL){
@@ -179,7 +178,6 @@ char GetNombre(){
   return Nombre;
 }
 
-
 void ImprimirAdyacencias(){
   Adyacencia.ImprimirInfo();
 }
@@ -202,8 +200,6 @@ void SetAdyacencia(int NodoB,char Nombre,float Peso){
   }
   
 };
-
-
 
 class ListaV2//GRAFO
 {
@@ -281,15 +277,14 @@ void encontrarCaminoMasPonderadoDesdeA(NodoV2* nodoActual, float ponderacionActu
   longitudCaminoActual--;
 }
    
-  public:
+public:
 
 void SetValidez(){
   this-> Validez = HechizoValido();
 }
 bool GetValidez(){
-return this-> Validez;
+  return this-> Validez;
 }
-
 
 string GetGeneroHechizo(){
  NodoV2*actual = first;
@@ -308,12 +303,10 @@ string GetGeneroHechizo(){
       case 'O': Salida = "Oscuridad"; break;
     }
   }
-  
+  actual = actual->GetNext();
  }
  return Salida;
-
 }
-
 
 float encontrarCaminoMasPonderado(ListaV2& grafo) {
     float ponderacionMaxima = 0;
@@ -436,7 +429,6 @@ bool PoseeConfluencia(){
     }
     actual = actual->GetNext();
   }
-
   return false;
 }
 
@@ -499,8 +491,6 @@ bool Articulo4Valido(){//VALIDA QUE UNA RANA CATALITICA NO ESTE ADYACENTE A UNA 
     }
     actual = actual->GetNext();
   }
-
- 
   return true;
 }
 bool Articulo5Valido() {
@@ -565,7 +555,6 @@ string PoseeRunasElementales(){
     }
     
   }
-  
   return Salida;
 }
 void SetTipoHechizo(string Hechizo){
@@ -582,8 +571,6 @@ ListaV2(){
     Validez= true;
   }
 
-
-  
 };
 
 class Mago
@@ -636,7 +623,6 @@ void NombreHechizo(string Apellido){
 
   string Elemental = Grafo.PoseeRunasElementales();
 
-   
   if(UltimaLetra == 'a'||UltimaLetra == 'e'||UltimaLetra == 'i'||UltimaLetra == 'o'||UltimaLetra == 'u'){
     Apellido = Apellido.substr(0, Apellido.length() - 1);
     NombreH = Apellido + "ium";
@@ -651,11 +637,6 @@ void NombreHechizo(string Apellido){
   else{
     Grafo.SetTipoHechizo(Elemental+" "+ NombreH + " "+ SegundoNombre);
   }
-  
- 
-
-  
-
 
 }
 
@@ -706,7 +687,6 @@ void SetNext(Mago *next){
 void ImprimirGrafo(){
 Grafo.ImprimirListaV2();
 }
-
 
 Mago(){
     Nombre = "";
@@ -873,7 +853,6 @@ Archivo.open("spellList.in");
         nuevo->SetId(contadorMagosNuevos);
       }
        
-
       separarNombreApellido(Linea,Nombre,Apellido);//separa los nombre y apellido
 
       getline(Archivo,Linea);//CANTIDAD DE CARACTERES
@@ -911,166 +890,47 @@ Archivo.open("spellList.in");
       CantidadMagos--;
     }
     
-
- 
     Archivo.close();
 }  
 
-void CargarProcessedSpellOut(){
+void CargarProcessedSpellOutV2() {
   Archivo.open("processedSpells.out", std::ios::out); // Abre en modo escritura
   if (Archivo.fail()) {
-    cout << "Error al abrir el archivo" << endl;
-    return;
+      cout << "Error al abrir el archivo" << endl;
+      return;
   }
+
+  // Vectores para almacenar hechizos legales e ilegales
   string HechizosLegales;
   string HechizosIlegales;
 
-  //CARGAMOS LOS ARCANOS
-  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
-  {
-    if (actual->GetGeneroHechizo() == "Arcano")
-    {
-      if (actual->GetValidezGrafo())
-      {
-        HechizosLegales += actual->GetNombreHechizo() + "\n";
-        HechizosLegales += actual->GetNombre();
-        HechizosLegales += "\n";
-      }
-      else{
-        HechizosIlegales += actual->GetNombreHechizo() + "\n";
-        HechizosIlegales += actual->GetNombre();
-        HechizosIlegales += "\n";
-      }
-      
-    }
-    
-  }
-  //CARGAMOS LOS FUEGO
-  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
-  {
-    if (actual->GetGeneroHechizo()== "Fuego")
-    {
-      if (actual->GetValidezGrafo())
-      {
-        HechizosLegales += actual->GetNombreHechizo() + "\n";
-        HechizosLegales += actual->GetNombre();
-        HechizosLegales += "\n";
-      }
-      else{
-        HechizosIlegales += actual->GetNombreHechizo() + "\n";
-        HechizosIlegales += actual->GetNombre();
-        HechizosIlegales += "\n";
-      }
-      
-    }
-    
-  }
-   //CARGAMOS LOS AGUA
-  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
-   {
-     if (actual->GetGeneroHechizo() == "Agua")
-     {
-       if (actual->GetValidezGrafo())
-       {
-         HechizosLegales += actual->GetNombreHechizo() + "\n";
-         HechizosLegales += actual->GetNombre();
-         HechizosLegales += "\n";
-       }
-       else{
-         HechizosIlegales += actual->GetNombreHechizo() + "\n";
-         HechizosIlegales += actual->GetNombre();
-         HechizosIlegales += "\n";
-       }
-       
-     }
-     
-   }
-     //CARGAMOS LOS TIERRA
-  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
-     {
-       if (actual->GetGeneroHechizo() == "Tierra")
-       {
-         if (actual->GetValidezGrafo())
-         {
-           HechizosLegales += actual->GetNombreHechizo() + "\n";
-           HechizosLegales += actual->GetNombre();
-           HechizosLegales += "\n";
-         }
-         else{
-           HechizosIlegales += actual->GetNombreHechizo() + "\n";
-           HechizosIlegales += actual->GetNombre();
-           HechizosIlegales += "\n";
-         }
-         
-       }
-       
-     }
-     //CARGAMOS LOS AIRE
-  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
- {
-   if (actual->GetGeneroHechizo() == "Aire")
-   {
-     if (actual->GetValidezGrafo())
-     {
-       HechizosLegales += actual->GetNombreHechizo() + "\n";
-       HechizosLegales += actual->GetNombre();
-       HechizosLegales += "\n";
-     }
-     else{
-       HechizosIlegales += actual->GetNombreHechizo() + "\n";
-       HechizosIlegales += actual->GetNombre();
-       HechizosIlegales += "\n";
-     }
-     
-   }
-   
- }
-     //CARGAMOS LOS lUZ
-  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
-  {
-    if (actual->GetGeneroHechizo() == "Luz")
-    {
-      if (actual->GetValidezGrafo())
-      {
-        HechizosLegales += actual->GetNombreHechizo() + "\n";
-        HechizosLegales += actual->GetNombre();
-        HechizosLegales += "\n";
-      }
-      else{
-        HechizosIlegales += actual->GetNombreHechizo() + "\n";
-        HechizosIlegales += actual->GetNombre();
-        HechizosIlegales += "\n";
-      }
-      
-    }
-    
-  }
-    //CARGAMOS LOS OSCURIDAD
-  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
-    {
-      if (actual->GetGeneroHechizo() == "Oscuridad")
-      {
-        if (actual->GetValidezGrafo())
-        {
-          HechizosLegales += actual->GetNombreHechizo() + "\n";
-          HechizosLegales += actual->GetNombre();
-          HechizosLegales += "\n";
-        }
-        else{
-          HechizosIlegales += actual->GetNombreHechizo() + "\n";
-          HechizosIlegales += actual->GetNombre();
-          HechizosIlegales += "\n";
-        }
-        
-      }
-      
-    }
+  // Orden de los tipos de hechizos según el Artículo 6
+  const string tiposHechizos[] = {"Arcano", "Fuego", "Agua", "Tierra", "Aire", "Luz", "Oscuridad"};
 
-Archivo << "Hechizos Legales: \n" << HechizosLegales;
-Archivo << "Hechizos Ilegales: \n" << HechizosIlegales;
+  // Recorrer los tipos de hechizos en el orden especificado
+  for (const string& tipo : tiposHechizos) {
+      Mago* actual = first;
+      while (actual != nullptr) {
+          if (actual->GetGeneroHechizo() == tipo) {
+              if (actual->GetValidezGrafo()) {
+                  // Hechizo legal
+                  HechizosLegales += actual->GetNombreHechizo() + "\n";
+                  HechizosLegales += actual->GetNombre() + "\n" + "\n";
+              } else {
+                  // Hechizo ilegal
+                  HechizosIlegales += actual->GetNombreHechizo() + "\n" ;
+                  HechizosIlegales += actual->GetNombre() + "\n" + "\n" ;
+              }
+          }
+          actual = actual->GetNext();
+      }
+  }
 
-  
-Archivo.close();
+  // Escribir en el archivo de salida
+  Archivo << "Hechizos Legales: \n\n" << HechizosLegales;
+  Archivo << "Hechizos Ilegales: \n\n" << HechizosIlegales;
+
+  Archivo.close();
 }
 
 void ImprimirMagos(){
@@ -1135,6 +995,6 @@ MAGOS.ImprimirMagos();
 MAGOS.MagosValido();  
 MAGOS.ImprimirCaminoMayorPeso();
 MAGOS.ImprimirNOmbreHechizos();
-MAGOS.CargarProcessedSpellOut();
-    return 0;
+MAGOS.CargarProcessedSpellOutV2();
+return 0;
 }
