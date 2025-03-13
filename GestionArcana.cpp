@@ -927,8 +927,8 @@ void CargarProcessedSpellOutV2() {
   }
 
   // Escribir en el archivo de salida
-  Archivo << "Hechizos Legales: \n\n" << HechizosLegales;
-  Archivo << "Hechizos Ilegales: \n\n" << HechizosIlegales;
+  Archivo << "Hechizos Legales \n\n" << HechizosLegales;
+  Archivo << "Hechizos Ilegales \n\n" << HechizosIlegales;
 
   Archivo.close();
 }
