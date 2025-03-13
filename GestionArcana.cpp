@@ -208,6 +208,7 @@ void SetAdyacencia(int NodoB,char Nombre,float Peso){
 class ListaV2//GRAFO
 {
 private:
+bool Validez;
 string TipoHechizo;
   NodoV2 *first;
 
@@ -282,7 +283,39 @@ void encontrarCaminoMasPonderadoDesdeA(NodoV2* nodoActual, float ponderacionActu
    
   public:
 
-  float encontrarCaminoMasPonderado(ListaV2& grafo) {
+void SetValidez(){
+  this-> Validez = HechizoValido();
+}
+bool GetValidez(){
+return this-> Validez;
+}
+
+
+string GetGeneroHechizo(){
+ NodoV2*actual = first;
+ string Salida = "Arcano"; 
+ while (actual!=nullptr)
+ {
+  if (actual->GetNombre() == 'I' ||actual->GetNombre() == 'Q' ||actual->GetNombre() == 'T' ||actual->GetNombre() == 'V' ||actual->GetNombre() == 'L' ||actual->GetNombre() == 'O')
+  {
+    char prefijo = actual->GetNombre();
+    switch (prefijo){
+      case 'I': Salida = "Fuego";break;
+      case 'Q':Salida = "Agua";break;
+      case 'T': Salida = "Tierra"; break;
+      case 'V': Salida = "Aire"; break;
+      case 'L': Salida = "Luz"; break;
+      case 'O': Salida = "Oscuridad"; break;
+    }
+  }
+  
+ }
+ return Salida;
+
+}
+
+
+float encontrarCaminoMasPonderado(ListaV2& grafo) {
     float ponderacionMaxima = 0;
     int caminoActual[100]; // Asumimos un máximo de 100 nodos en el camino
     int longitudCaminoActual = 0;
@@ -484,7 +517,7 @@ bool Articulo5Valido() {
    return (longitudMaxima % 2 == 0);
   }
 // Función para verificar si el hechizo es válido según todos los artículos
-bool HechizoValido() {
+bool HechizoValido(){
   return Articulo1Valido() && Articulo2Valido() && Articulo3Valido() && Articulo4Valido() && Articulo5Valido();
 }
 
@@ -546,6 +579,7 @@ string GetTipoHechizo(){
 ListaV2(){
     first = nullptr;
     TipoHechizo =" ";
+    Validez= true;
   }
 
 
@@ -555,13 +589,30 @@ ListaV2(){
 class Mago
 {
 private:
+  int Id;
   string Nombre;
   int NumeroCaracteres;
   string Caracteres;
   ListaV2 Grafo;
   Mago *next;
 public:
+void SetId(int Id){
+  this->Id = Id;
+}
+int GetId(){
+  return this->Id;
+}
 
+string GetGeneroHechizo(){
+  return this->Grafo.GetGeneroHechizo();
+}
+
+void SetValidezGrafo(){
+  this->Grafo.SetValidez();
+}
+bool GetValidezGrafo(){
+  return this->Grafo.GetValidez();
+}
 
 void NombreHechizo(string Apellido){
   string Prefijo_Sufijo = Grafo.PoseeRunasElementales();
@@ -748,7 +799,7 @@ float leerFlotanteDesdeSegundoEspacio(const char* str) {
   // Convertir el string a flotante usando atof()
   return atof(numeroStr);
 }
-void separarNombreApellido(const std::string& texto, std::string& nombre, std::string& apellido) {
+void separarNombreApellido(const string& texto, string& nombre, string& apellido) {
   int espacioPos = -1;
   for (int i = 0; i < texto.length(); ++i) {
       if (texto[i] == ' ') {
@@ -765,6 +816,7 @@ void separarNombreApellido(const std::string& texto, std::string& nombre, std::s
       apellido = ""; // Si no hay espacio, el apellido está vacío
   }
 }
+
 class Hechiceros
 {
 private:
@@ -772,6 +824,8 @@ fstream Archivo;
   Mago *first;
   Mago *last;
 public:
+
+
 void CargarDatosSpellList(){
 Archivo.open("spellList.in");
     if (Archivo.fail()) {
@@ -781,6 +835,7 @@ Archivo.open("spellList.in");
     string Linea;
     getline(Archivo, Linea);
     int CantidadMagos = stoi(Linea);
+    int contadorMagosNuevos = 0;
     while (CantidadMagos > 0)
     {
       Mago *nuevo = new Mago();
@@ -788,6 +843,36 @@ Archivo.open("spellList.in");
      string Apellido;
       getline(Archivo,Linea); //NOMBRE DEL MAGO
       nuevo->SetNombre(Linea);
+
+      if (first!=nullptr)//asigna al mismo id a unos maos en comun
+      {
+        Mago*aux = first;
+        bool Conseguido = false;
+        while (aux!=nullptr)
+        {
+
+          if (nuevo->GetNombre() == aux->GetNombre())
+          {
+            Conseguido = true;
+            nuevo->SetId(aux->GetId());
+          }
+          
+          aux = aux->GetNext();
+        }
+
+        if (!Conseguido)
+        {
+          contadorMagosNuevos++;
+          nuevo->SetId(contadorMagosNuevos);
+
+        }
+        
+      }
+      else{
+        contadorMagosNuevos++;
+        nuevo->SetId(contadorMagosNuevos);
+      }
+       
 
       separarNombreApellido(Linea,Nombre,Apellido);//separa los nombre y apellido
 
@@ -811,8 +896,8 @@ Archivo.open("spellList.in");
           nuevo->CargarGrafo(nodoA,nodoB,Caracteres[nodoA-1],Caracteres[nodoB-1],Peso);
           CantidadLineas--;
         }
-
-      nuevo->NombreHechizo(Apellido);
+      nuevo->SetValidezGrafo();//ME CARGA DE UNA SI EL GRAFO ES LEGAL O NO
+      nuevo->NombreHechizo(Apellido);// ME CARGA DE UNA EL NOMBRE DEL GRAFO
       
       if (first == nullptr)
       {
@@ -831,7 +916,162 @@ Archivo.open("spellList.in");
     Archivo.close();
 }  
 
+void CargarProcessedSpellOut(){
+  Archivo.open("processedSpells.out", std::ios::out); // Abre en modo escritura
+  if (Archivo.fail()) {
+    cout << "Error al abrir el archivo" << endl;
+    return;
+  }
+  string HechizosLegales;
+  string HechizosIlegales;
 
+  //CARGAMOS LOS ARCANOS
+  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
+  {
+    if (actual->GetGeneroHechizo() == "Arcano")
+    {
+      if (actual->GetValidezGrafo())
+      {
+        HechizosLegales += actual->GetNombreHechizo() + "\n";
+        HechizosLegales += actual->GetNombre();
+        HechizosLegales += "\n";
+      }
+      else{
+        HechizosIlegales += actual->GetNombreHechizo() + "\n";
+        HechizosIlegales += actual->GetNombre();
+        HechizosIlegales += "\n";
+      }
+      
+    }
+    
+  }
+  //CARGAMOS LOS FUEGO
+  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
+  {
+    if (actual->GetGeneroHechizo()== "Fuego")
+    {
+      if (actual->GetValidezGrafo())
+      {
+        HechizosLegales += actual->GetNombreHechizo() + "\n";
+        HechizosLegales += actual->GetNombre();
+        HechizosLegales += "\n";
+      }
+      else{
+        HechizosIlegales += actual->GetNombreHechizo() + "\n";
+        HechizosIlegales += actual->GetNombre();
+        HechizosIlegales += "\n";
+      }
+      
+    }
+    
+  }
+   //CARGAMOS LOS AGUA
+  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
+   {
+     if (actual->GetGeneroHechizo() == "Agua")
+     {
+       if (actual->GetValidezGrafo())
+       {
+         HechizosLegales += actual->GetNombreHechizo() + "\n";
+         HechizosLegales += actual->GetNombre();
+         HechizosLegales += "\n";
+       }
+       else{
+         HechizosIlegales += actual->GetNombreHechizo() + "\n";
+         HechizosIlegales += actual->GetNombre();
+         HechizosIlegales += "\n";
+       }
+       
+     }
+     
+   }
+     //CARGAMOS LOS TIERRA
+  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
+     {
+       if (actual->GetGeneroHechizo() == "Tierra")
+       {
+         if (actual->GetValidezGrafo())
+         {
+           HechizosLegales += actual->GetNombreHechizo() + "\n";
+           HechizosLegales += actual->GetNombre();
+           HechizosLegales += "\n";
+         }
+         else{
+           HechizosIlegales += actual->GetNombreHechizo() + "\n";
+           HechizosIlegales += actual->GetNombre();
+           HechizosIlegales += "\n";
+         }
+         
+       }
+       
+     }
+     //CARGAMOS LOS AIRE
+  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
+ {
+   if (actual->GetGeneroHechizo() == "Aire")
+   {
+     if (actual->GetValidezGrafo())
+     {
+       HechizosLegales += actual->GetNombreHechizo() + "\n";
+       HechizosLegales += actual->GetNombre();
+       HechizosLegales += "\n";
+     }
+     else{
+       HechizosIlegales += actual->GetNombreHechizo() + "\n";
+       HechizosIlegales += actual->GetNombre();
+       HechizosIlegales += "\n";
+     }
+     
+   }
+   
+ }
+     //CARGAMOS LOS lUZ
+  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
+  {
+    if (actual->GetGeneroHechizo() == "Luz")
+    {
+      if (actual->GetValidezGrafo())
+      {
+        HechizosLegales += actual->GetNombreHechizo() + "\n";
+        HechizosLegales += actual->GetNombre();
+        HechizosLegales += "\n";
+      }
+      else{
+        HechizosIlegales += actual->GetNombreHechizo() + "\n";
+        HechizosIlegales += actual->GetNombre();
+        HechizosIlegales += "\n";
+      }
+      
+    }
+    
+  }
+    //CARGAMOS LOS OSCURIDAD
+  for (Mago* actual = first;  actual!=nullptr; actual = actual->GetNext())
+    {
+      if (actual->GetGeneroHechizo() == "Oscuridad")
+      {
+        if (actual->GetValidezGrafo())
+        {
+          HechizosLegales += actual->GetNombreHechizo() + "\n";
+          HechizosLegales += actual->GetNombre();
+          HechizosLegales += "\n";
+        }
+        else{
+          HechizosIlegales += actual->GetNombreHechizo() + "\n";
+          HechizosIlegales += actual->GetNombre();
+          HechizosIlegales += "\n";
+        }
+        
+      }
+      
+    }
+
+Archivo << "Hechizos Legales: \n" << HechizosLegales;
+Archivo << "Hechizos Ilegales: \n" << HechizosIlegales;
+
+  
+Archivo.close();
+}
 
 void ImprimirMagos(){
   Mago *actual = first;
@@ -895,5 +1135,6 @@ MAGOS.ImprimirMagos();
 MAGOS.MagosValido();  
 MAGOS.ImprimirCaminoMayorPeso();
 MAGOS.ImprimirNOmbreHechizos();
+MAGOS.CargarProcessedSpellOut();
     return 0;
 }
