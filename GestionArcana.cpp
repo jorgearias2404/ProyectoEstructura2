@@ -819,8 +819,8 @@ Archivo.open("spellList2.in");
     while (CantidadMagos > 0)
     {
       Mago *nuevo = new Mago();
-     string Nombre;
-     string Apellido;
+      string Nombre;
+      string Apellido;
       getline(Archivo,Linea); //NOMBRE DEL MAGO
       nuevo->SetNombre(Linea);
 
@@ -990,7 +990,7 @@ void ActualizarUnderInvestigation(){
     // Recorrer la lista de magos y añadir los que tienen 3 o más hechizos ilegales al archivo
     for (int i = 0; i < cantidadMagos; i++) {
         if (listaMagos[i].contadorIlegales >= 3) {
-            Archivo << listaMagos[i].nombre << endl; // Escribe el nombre del mago en el archivo
+            Archivo << endl<< listaMagos[i].nombre; // Escribe el nombre del mago en el archivo
         }
     }
 
@@ -999,9 +999,7 @@ void ActualizarUnderInvestigation(){
 
     Archivo.close();
   
-
 }
-
 
 void ImprimirMagos(){
   Mago *actual = first;
@@ -1034,6 +1032,7 @@ void MagosValido(){
     actual = actual->GetNext();
   }
 }
+
 void ImprimirCaminoMayorPeso(){
   Mago *actual = first;
   while (actual!=nullptr)
@@ -1067,5 +1066,6 @@ MAGOS.MagosValido();
 MAGOS.ImprimirCaminoMayorPeso();
 MAGOS.ImprimirNOmbreHechizos();
 MAGOS.CargarProcessedSpellOutV2();
+MAGOS.ActualizarUnderInvestigation();
 return 0;
 }
